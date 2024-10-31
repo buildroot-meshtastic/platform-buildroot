@@ -13,32 +13,56 @@
 # limitations under the License.
 
 """
-    Builder for native platform
+    Builder for buildroot platform
 """
 
 from SCons.Script import COMMAND_LINE_TARGETS, AlwaysBuild, Default, DefaultEnvironment
+import os
 
 env = DefaultEnvironment()
 
-# Remove generic C/C++ tools
-for k in ("CC", "CXX"):
-    if k in env:
-        del env[k]
+for name, value in os.environ.items():
+    print(f"D_ENV: {name}={value}")
 
-# Preserve C and C++ build flags
-backup_cflags = env.get("CFLAGS", [])
-backup_cxxflags = env.get("CXXFLAGS", [])
+print()
 
-# Scan for GCC compiler
-env.Tool("gcc")
-env.Tool("g++")
+env.Replace(
+    AR=os.getenv("TARGET_AR"),
+    AS=os.getenv("TARGET_AS"),
+    CC=os.getenv("TARGET_CC"),
+    CXX=os.getenv("TARGET_CXX"),
+    # CFLAGS=os.getenv("TARGET_CFLAGS"),
+    LD=os.getenv("TARGET_LD"),
+    # GDB=os.getenv("TARGET_GDB"),
+    OBJCOPY=os.getenv("TARGET_OBJCOPY"),
+    RANLIB=os.getenv("TARGET_RANLIB"),
+    # SIZETOOL=os.getenv("TARGET_SIZE"),
 
-# Reload "compilation_db" tool
-if "compiledb" in COMMAND_LINE_TARGETS:
-    env.Tool("compilation_db")
+)
+# env.Append(
+# )
 
-# Restore C/C++ build flags as they were overridden by env.Tool
-env.Append(CFLAGS=backup_cflags, CXXFLAGS=backup_cxxflags)
+# print(env.Dump())
+
+# # Remove generic C/C++ tools
+# for k in ("CC", "CXX"):
+#     if k in env:
+#         del env[k]
+
+# # Preserve C and C++ build flags
+# backup_cflags = env.get("CFLAGS", [])
+# backup_cxxflags = env.get("CXXFLAGS", [])
+
+# # Scan for GCC compiler
+# env.Tool("gcc")
+# env.Tool("g++")
+
+# # Reload "compilation_db" tool
+# if "compiledb" in COMMAND_LINE_TARGETS:
+#     env.Tool("compilation_db")
+
+# # Restore C/C++ build flags as they were overridden by env.Tool
+# env.Append(CFLAGS=backup_cflags, CXXFLAGS=backup_cxxflags)
 
 #
 # Target: Build executable program
