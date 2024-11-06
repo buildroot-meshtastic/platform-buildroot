@@ -32,10 +32,12 @@ env.Replace(
 )
 
 env.Append(
-    CFLAGS=os.getenv("TARGET_CFLAGS")
+    CFLAGS=os.getenv("TARGET_CFLAGS"),
+    LDFLAGS=os.getenv("TARGET_LDFLAGS"),
+    CXXFLAGS=os.getenv("TARGET_CXXFLAGS"),
 )
 
-# print(env.Dump())
+print(env.Dump())
 
 #
 # Target: Build executable program
