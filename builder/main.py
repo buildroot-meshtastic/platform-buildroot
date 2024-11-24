@@ -13,32 +13,31 @@
 # limitations under the License.
 
 """
-    Builder for native platform
+    Builder for buildroot platform
 """
 
 from SCons.Script import COMMAND_LINE_TARGETS, AlwaysBuild, Default, DefaultEnvironment
+import os
 
 env = DefaultEnvironment()
 
-# Remove generic C/C++ tools
-for k in ("CC", "CXX"):
-    if k in env:
-        del env[k]
+env.Replace(
+    AR=os.getenv("TARGET_AR"),
+    AS=os.getenv("TARGET_AS"),
+    CC=os.getenv("TARGET_CC"),
+    CXX=os.getenv("TARGET_CXX"),
+    LD=os.getenv("TARGET_LD"),
+    OBJCOPY=os.getenv("TARGET_OBJCOPY"),
+    RANLIB=os.getenv("TARGET_RANLIB")
+)
 
-# Preserve C and C++ build flags
-backup_cflags = env.get("CFLAGS", [])
-backup_cxxflags = env.get("CXXFLAGS", [])
+env.Append(
+    CFLAGS=os.getenv("TARGET_CFLAGS"),
+    LDFLAGS=os.getenv("TARGET_LDFLAGS"),
+    CXXFLAGS=os.getenv("TARGET_CXXFLAGS"),
+)
 
-# Scan for GCC compiler
-env.Tool("gcc")
-env.Tool("g++")
-
-# Reload "compilation_db" tool
-if "compiledb" in COMMAND_LINE_TARGETS:
-    env.Tool("compilation_db")
-
-# Restore C/C++ build flags as they were overridden by env.Tool
-env.Append(CFLAGS=backup_cflags, CXXFLAGS=backup_cxxflags)
+print(env.Dump())
 
 #
 # Target: Build executable program
@@ -60,9 +59,9 @@ AlwaysBuild(env.Alias("upload", target_bin, exec_action))
 # Target: Print binary size
 #
 
-target_size = env.Alias("size", target_bin, env.VerboseAction(
-    "$SIZEPRINTCMD", "Calculating size $SOURCE"))
-AlwaysBuild(target_size)
+# target_size = env.Alias("size", target_bin, env.VerboseAction(
+#     "$SIZEPRINTCMD", "Calculating size $SOURCE"))
+# AlwaysBuild(target_size)
 
 #
 # Default targets

@@ -1,5 +1,4 @@
-# Native: development platform for [PlatformIO](https://platformio.org)
-[![Build Status](https://github.com/platformio/platform-native/workflows/Examples/badge.svg)](https://github.com/platformio/platform-native/actions)
+# Buildroot: development platform for [PlatformIO](https://platformio.org)
 
 Native development platform is intended to be used for desktop OS. This platform uses built-in toolchains (preferable based on GCC), frameworks, libs from particular OS where it will be run.
 
